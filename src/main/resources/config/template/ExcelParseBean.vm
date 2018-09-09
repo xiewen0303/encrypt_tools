@@ -1,0 +1,17 @@
+package com.junyou.gameconfig.model.${ClassContext.packageName}.bean;
+
+import java.util.Map;
+
+/**
+ * code from codeGen
+ **/
+public class ${ClassContext.className} extends ${ClassContext.className}Base {
+	
+	/**
+	 * 添加需要自己转换的字段解析的字段
+	 */
+	@Override
+	public void resolveExtendField(Map<String,Object> data){
+		
+	}
+}

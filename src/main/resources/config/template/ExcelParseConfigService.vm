@@ -1,0 +1,50 @@
+package com.junyou.gameconfig.model.${ClassContext.packageName};
+
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.stereotype.Service;
+import com.junyou.configure.parser.impl.AbsClasspathConfigureParser;
+import com.junyou.gameconfig.model.${ClassContext.packageName}.bean.${ClassContext.className};
+import com.junyou.gameconfig.utils.GameConfigUtil;
+import com.junyou.log.GameLog;
+
+/**
+ *  code from codeGen
+ **/
+@Service
+public class ${ClassContext.className}Service extends AbsClasspathConfigureParser {
+	
+	private Map<Integer,${ClassContext.className}> datas = new HashMap<>();
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void configureDataResolve(byte[] data) {
+		if(data == null){
+			GameLog.error(${ClassContext.className}Service.class.getSimpleName()+"config data is null");
+			return;
+		}
+		Object[] dataList = GameConfigUtil.getResource(data);
+		for (Object object : dataList) {
+			${ClassContext.className} bean  = new ${ClassContext.className}();
+			bean.dataPrase((Map<String,Object>)object);
+			datas.put(bean.getId(), bean);
+			parsingOtherData(bean);
+		}
+	}
+	
+	@Override
+	protected String getConfigureName() {
+		return "${ClassContext.fileName}.jat";
+	}
+	
+	public ${ClassContext.className} load(int id) {
+		return datas.get(id);
+	}
+	
+	/**
+     * 扩展
+     */
+	private void parsingOtherData(${ClassContext.className} bean){
+
+    }
+}

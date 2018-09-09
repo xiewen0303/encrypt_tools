@@ -1,0 +1,51 @@
+package com.junyou.gameconfig.model.${ClassContext.packageName}.bean;
+
+import java.util.Map;
+import com.junyou.gameconfig.model.AbsConfigData;
+import com.junyou.utils.common.CovertObjectUtil;
+
+/**
+ * code from codeGen
+ **/
+public abstract class ${ClassContext.className}Base extends AbsConfigData {
+
+	
+#foreach( $prop in ${ClassContext.fieldTypes} )
+	/**
+	 * ${prop.fieldDesc}   
+	 **/
+	private ${prop.dataType} ${prop.fieldName};
+#end
+
+#foreach( $prop in ${ClassContext.fieldTypes} )
+	public ${prop.dataType} get${prop.fieldMethodName}() {
+		return ${prop.fieldName};
+	}
+	
+	public void set${prop.fieldMethodName}($prop.dataType $prop.fieldName) {
+		this.$prop.fieldName = $prop.fieldName;
+	}
+#end
+	
+	@Override
+	public void dataResolve(Map<String, Object> data) {
+#foreach( $prop in ${ClassContext.fieldTypes} )
+#set($parseName = "")
+#if($prop.dataType == "String")
+	#set($parseName="object2String")
+#elseif($prop.dataType == "long")
+	#set($parseName="obj2long")
+#elseif($prop.dataType == "int")
+	#set($parseName="object2int")
+#elseif($prop.dataType == "boolean")
+	#set($parseName="object2boolean")
+#elseif($prop.dataType == "Object[]")
+	#set($parseName="object2ObjectArray")
+#end
+		this.${prop.fieldName} = CovertObjectUtil.${parseName}(data.get("$prop.fieldName"));
+#end
+	}
+	
+	@Override
+	public abstract void resolveExtendField(Map<String,Object> data);
+}

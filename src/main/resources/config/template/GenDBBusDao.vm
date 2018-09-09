@@ -1,0 +1,20 @@
+package com.junyou.bus.${package}.dao;
+
+import java.util.List;
+import org.springframework.stereotype.Repository;
+import com.junyou.dbbean.$clazzName;
+import com.junyou.bus.share.dao.BusAbsCacheDao;
+import com.kernel.data.accessor.AccessType;
+import com.kernel.data.dao.QueryParamMap;
+
+/**
+ */
+@Repository
+public class ${clazzName}Dao extends BusAbsCacheDao<$clazzName> {
+
+	public List<$clazzName> init${clazzName}(long userRoleId) {
+		QueryParamMap<String, Object> map = new QueryParamMap<String, Object>();
+		map.put("userRoleId", userRoleId);
+		return getRecords(map, userRoleId,AccessType.getDirectDbType());
+	}
+}

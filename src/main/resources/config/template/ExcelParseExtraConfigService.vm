@@ -1,0 +1,45 @@
+package com.junyou.gameconfig.model.${ClassContext.packageName};
+
+import java.util.Map;
+import org.springframework.stereotype.Service;
+import com.junyou.configure.parser.impl.AbsClasspathConfigureParser;
+import com.junyou.gameconfig.model.${ClassContext.packageName}.bean.${ClassContext.className};
+import com.junyou.gameconfig.utils.GameConfigUtil;
+import com.junyou.log.GameLog;
+
+/**
+ *  code from codeGen
+ **/
+@Service
+public class ${ClassContext.className}Service extends AbsClasspathConfigureParser {
+	
+	private ${ClassContext.className} dataBean = new ${ClassContext.className}();
+	
+	@Override
+	protected void configureDataResolve(byte[] data) {
+		if(data == null){
+			GameLog.error(${ClassContext.className}Service.class.getSimpleName()+"config data is null");
+			return;
+		}
+		Map<String,Object> dataList = GameConfigUtil.getExtraResource(data);
+		dataBean.dataPrase(dataList);
+		parsingOtherData(dataBean);
+	}
+	
+	@Override
+	protected String getConfigureName() {
+		return "extra/${ClassContext.fileName}.json";
+	}
+	
+	public ${ClassContext.className} load() {
+		return dataBean;
+	}
+	
+	/**
+     * 扩展
+     */
+	private void parsingOtherData(${ClassContext.className} bean){
+
+    }
+
+}

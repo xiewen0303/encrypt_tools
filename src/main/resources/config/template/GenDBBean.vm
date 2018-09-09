@@ -1,0 +1,54 @@
+package com.junyou.dbbean;
+
+import java.io.Serializable;
+import com.kernel.data.dao.AbsVersion;
+import com.kernel.data.dao.IEntity;
+import com.kernel.check.db.annotation.*;
+import java.sql.*;
+
+@Table("${tableName}")
+public class $clazzName extends AbsVersion implements Serializable,IEntity{
+
+	@EntityField
+	private static final long serialVersionUID = 1L;
+
+	#foreach( $prop in $propList )
+@Column("$prop.columName")
+	private $prop.clazz $prop.propName;
+	
+	#end
+	
+	#foreach( $prop in $propList )
+public ${prop.clazz} get${prop.methodName}() {
+		return ${prop.propName};
+	}
+	
+	public void set${prop.methodName}($prop.clazz $prop.propName) {
+		this.$prop.propName = $prop.propName;
+	}
+	#end
+
+	@Override
+	public String getPirmaryKeyName() {
+		return #foreach($pk in $primaryKeys)
+"${pk.propName}";
+			#end
+			
+	}
+
+	@Override
+	public Long getPrimaryKeyValue() {
+		return #foreach($pk in $primaryKeys)
+${pk.propName};
+			#end
+			
+	}
+
+	public $clazzName copy() {
+		$clazzName result = new $clazzName();
+		#foreach( $prop in $propList )
+result.set${prop.methodName}(get${prop.methodName}());			
+		#end
+return result;
+	} 
+}

@@ -1,0 +1,236 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>tools</groupId>
+  <artifactId>tools</artifactId>
+  <packaging>jar</packaging>
+  <version>gen</version>
+  <name>encrypt_tools</name>
+  <url>http://maven.apache.org</url>
+
+
+  <properties>
+    <!-- 项目编码-->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- 单元测试包-->
+    <junit.version>4.12</junit.version>
+  </properties>
+
+
+  <dependencies>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+    </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
+      <dependency>
+        <groupId>org.apache.velocity</groupId>
+        <artifactId>velocity</artifactId>
+        <version>1.7</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+      <dependency>
+        <groupId>org.apache.xmlbeans</groupId>
+        <artifactId>xmlbeans</artifactId>
+        <version>2.6.0</version>
+      </dependency>
+
+
+
+      <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.46</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>3.13</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>3.13</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml-schemas</artifactId>
+        <version>3.13</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>1.2.29</version>
+      </dependency>
+  </dependencies>
+
+
+
+  <build>
+
+
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <!--
+          <finalName>gameserver</finalName>
+          -->
+          <!-- 把生成的jar包放在lib目录下（和其他所有jar包一起） -->
+          <outputDirectory>${project.build.directory}</outputDirectory>
+          <archive>
+            <!-- 自定义classpath -->
+            <manifestEntries>
+              <Class-Path>.</Class-Path>
+            </manifestEntries>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <!-- classpath 对引入jar添加前缀 -->
+              <classpathPrefix>lib</classpathPrefix>
+              <!-- -->
+              <mainClass>code.gen.tools.StartMain</mainClass>
+
+            </manifest>
+          </archive>
+          <!--  排除掉一些文件,不要放到jar包中，
+           这里是为了排除掉src/main/resources中的文件（它们应该放到conf目录）
+           这里只能指定要排除的目标文件，而不能指定源文件，虽然不够完美，但是基本能达到目的。 -->
+
+          <excludes>
+            <exclude>**/*.properties</exclude>
+            <exclude>**/*.vm</exclude>
+          </excludes>
+
+        </configuration>
+      </plugin>
+
+      <!-- 用于拷贝maven依赖的plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <!-- 把依赖的所有maven jar包拷贝到lib目录中（这样所有的jar包都在lib目录中） -->
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+      <plugin>
+        <groupId>com.github.wvengen</groupId>
+        <artifactId>proguard-maven-plugin</artifactId>
+        <version>2.0.14</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>proguard</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <attach>true</attach>
+          <attachArtifactClassifier>encrypt</attachArtifactClassifier>
+          <!-- attach 的作用是在 install 与 deploy 时将生成的 pg 文件也安装与部署 -->
+          <options> <!-- 详细配置方式参考 ProGuard 官方文档 -->
+            <!--<option>-dontobfuscate</option>-->
+            <option>-ignorewarnings</option> <!--忽略所有告警-->
+            <option>-dontshrink</option>   <!--不做 shrink -->
+            <option>-dontoptimize</option> <!--不做 optimize -->
+            <option>-dontskipnonpubliclibraryclasses</option>
+            <option>-dontskipnonpubliclibraryclassmembers</option>
+
+
+
+            <option>-repackageclasses code.gen.tools.pg</option>
+            <!-- 平行包结构（重构包层次），所有混淆的类放在 pg 包下-->
+            <!--
+            <option>-keepnames class code.gen.tools.xlsgen.GenConfigMain</option>
+            <option>-keepclassmembers class code.gen.tools.xlsgen.GenConfigMain { &lt;main&gt;;}</option>
+            -->
+            <option>-keep class code.gen.tools.StartMain { &lt;methods&gt;; }</option>
+
+
+
+            <!--
+            <option>-keep class org.noahx.proguard.example.project2.Project2 { public void init(); public void
+              destroy(); }
+            </option>
+            -->
+            <!-- 保持对外的接口性质类对外的类名与方法名不变 -->
+
+          </options>
+          <outjar>${project.build.finalName}-pg1212</outjar>
+          <libs>
+            <lib>${java.home}/lib/rt.jar</lib>
+          </libs>
+
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

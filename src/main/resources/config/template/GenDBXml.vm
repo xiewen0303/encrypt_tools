@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap>
+	<resultMap id="${alias}" class="com.junyou.dbbean.${clazzName}">
+#foreach($prop in $propList)
+		    <result property="$prop.propName" column="$prop.columName"/>
+#end
+	</resultMap>
+   
+   <sql id="queryCondition${clazzName}">
+		<dynamic prepend="where">
+		#foreach($prop in $propList)
+	<isNotNull prepend="and" property="${prop.propName}">  $prop.columName = #${prop.propName}# </isNotNull>
+		#end 
+</dynamic>
+	</sql>
+   
+   <sql id="queryByKey${clazzName}">
+		where #foreach($pKey in $primaryKeys) ${pKey.columName}=#${pKey.propName}# 
+#end 
+	</sql>
+   
+   <insert id="insert${clazzName}" parameterClass="com.junyou.dbbean.${clazzName}">
+		insert into ${tName}(
+			#set($i = 0)#foreach($prop in $propList)<isNotNull prepend="#set($i = $i+1)#if($i != 1),#end" property="${prop.propName}"> $prop.columName </isNotNull> 
+			#end
+)values(
+			#set($i = 0)#foreach($prop in $propList)<isNotNull prepend="#set($i = $i+1)#if($i != 1),#end" property="${prop.propName}"> #${prop.propName}# </isNotNull>
+			#end
+)
+	</insert>
+   
+   <delete id="delete${clazzName}">
+		delete from ${tName}
+		<include refid="queryByKey${clazzName}"/>
+	</delete>
+
+	<update id="update${clazzName}" parameterClass="com.junyou.dbbean.${clazzName}">
+		update ${tName} 
+		<dynamic prepend="set">
+		#foreach($prop in $propList)
+<isNotNull prepend="," property="${prop.propName}"> $prop.columName = #${prop.propName}# </isNotNull>
+		#end 
+		</dynamic>
+		<include refid="queryByKey${clazzName}"/>
+	</update>
+
+	<select id="selectSingle${clazzName}" resultMap="${alias}">
+		select 
+		#set($i = 0)#foreach($prop in $propList)#set($i = $i+1) $prop.columName#if($i != $propList.size()),
+		#end#end
+		
+		from ${tName}  
+		<include refid="queryByKey${clazzName}"/>
+	</select>
+
+	<select id="selectRecordsCount${clazzName}" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		select count(*) from ${tName}  
+		<include refid="queryCondition${clazzName}"/>
+	</select>
+	
+	<select id="selectMultiPaging${clazzName}" parameterClass="java.util.Map" resultMap="${alias}">
+		select 
+		#set($i = 0)#foreach($prop in $propList)#set($i = $i+1) $prop.columName#if($i != $propList.size()),
+		#end#end
+		
+		from ${tName}  
+		<include refid="queryCondition${clazzName}"/>
+		limit #start#,#pagesize#
+	</select>
+	
+	<select id="selectMulti${clazzName}" parameterClass="java.util.Map" resultMap="${alias}">
+		select 
+		#set($i = 0)#foreach($prop in $propList)#set($i = $i+1) $prop.columName#if($i != $propList.size()),
+		#end#end
+		
+		from ${tName}  
+		<include refid="queryCondition${clazzName}"/>
+	</select>
+	
+	<select id="selectAll${clazzName}" resultMap="${alias}">
+		select 
+		#set($i = 0)#foreach($prop in $propList)#set($i = $i+1) $prop.columName#if($i != $propList.size()),
+		#end#end
+		
+		from ${tName}  
+		<include refid="queryCondition${clazzName}"/>
+	</select>	
+</sqlMap>
