@@ -238,6 +238,10 @@ public class GenConfigService {
                 }else if("附加数据".equals(sheet.getSheetName().trim())){
 
                     ClassContext classContext = getExtensionSheetValue(sheet,fileName.substring(0, fileName.indexOf("."))+"Extra",fileName.substring(0, fileName.indexOf(".")));
+                    if(classContext.getFieldTypes() == null || classContext.getFieldTypes().isEmpty()){
+                        System.out.println("【"+fileName+"】附加数据没有值，清删除附加数据表~");
+                        continue;
+                    }
 
                     String targetPackageName = fileOutputPath + "/com/junyou/gameconfig/model/"+fileName.substring(0, fileName.indexOf("."));
                     File dirPath = new File(targetPackageName+"/bean/"+classContext.getClassName()).getParentFile();
@@ -263,7 +267,7 @@ public class GenConfigService {
 
         classContext.setClassName(fileName+"Config");
         classContext.setPackageName(packageName.toLowerCase());
-        classContext.setFileName(fileName);
+        classContext.setFileName(packageName);
         int lenRowNum = sheet.getLastRowNum();
 
         for (int i = 1; i < lenRowNum; i++) {
