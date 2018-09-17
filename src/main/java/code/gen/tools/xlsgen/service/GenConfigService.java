@@ -174,8 +174,10 @@ public class GenConfigService {
                 fieldTypeStr = "long";
                 break;
             case "|":
+                fieldTypeStr = "List<String>";
+                break;
             case "|:":
-                fieldTypeStr = "Object[]";
+                fieldTypeStr = "Map<String,String>";
                 break;
             default:
                 break;
@@ -261,7 +263,7 @@ public class GenConfigService {
 
         classContext.setClassName(fileName+"Config");
         classContext.setPackageName(packageName.toLowerCase());
-
+        classContext.setFileName(fileName);
         int lenRowNum = sheet.getLastRowNum();
 
         for (int i = 1; i < lenRowNum; i++) {

@@ -1,5 +1,6 @@
 package com.junyou.gameconfig.model.${ClassContext.packageName}.bean;
 
+import java.util.List;
 import java.util.Map;
 import com.junyou.gameconfig.model.AbsConfigData;
 import com.junyou.utils.common.CovertObjectUtil;
@@ -39,8 +40,10 @@ public abstract class ${ClassContext.className}Base extends AbsConfigData {
 	#set($parseName="object2int")
 #elseif($prop.dataType == "boolean")
 	#set($parseName="object2boolean")
-#elseif($prop.dataType == "Object[]")
-	#set($parseName="object2ObjectArray")
+#elseif($prop.dataType == "List<String>")
+	#set($parseName="object2CfgArray")
+#elseif($prop.dataType == "Map<String,String>")
+	#set($parseName="object2CfgMap")
 #end
 		this.${prop.fieldName} = CovertObjectUtil.${parseName}(data.get("$prop.fieldName"));
 #end
